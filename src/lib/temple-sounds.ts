@@ -96,7 +96,7 @@ export function playStickPopSound() {
   filter.type = "bandpass";
   filter.frequency.setValueAtTime(300, now);
   filter.Q.setValueAtTime(6, now);
-  gain2.gain.setValueAtTime(0.1, now);
+  gain2.gain.setValueAtTime(0.15, now);
   gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
   osc2.connect(filter).connect(gain2).connect(dest);
   osc2.start(now);
