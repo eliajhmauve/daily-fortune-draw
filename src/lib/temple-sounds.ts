@@ -1,10 +1,30 @@
 // Synthesized temple sounds using Web Audio API — no external dependencies needed
 
 let audioCtx: AudioContext | null = null;
+let masterGain: GainNode | null = null;
+let _muted = false;
 
 function getCtx(): AudioContext {
-  if (!audioCtx) audioCtx = new AudioContext();
+  if (!audioCtx) {
+    audioCtx = new AudioContext();
+    masterGain = audioCtx.createGain();
+    masterGain.connect(audioCtx.destination);
+  }
   return audioCtx;
+}
+
+function getDest(): AudioNode {
+  getCtx();
+  return masterGain!;
+}
+
+export function setMuted(muted: boolean) {
+  _muted = muted;
+  if (masterGain) masterGain.gain.value = muted ? 0 : 1;
+}
+
+export function isMuted(): boolean {
+  return _muted;
 }
 
 /** Wooden stick rattling sound — tuned for hollow bamboo tube resonance */
