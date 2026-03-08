@@ -7,103 +7,159 @@ function getCtx(): AudioContext {
   return audioCtx;
 }
 
-/** Wooden stick rattling sound */
+/** Wooden stick rattling sound — tuned for hollow bamboo tube resonance */
 export function playShakeSound() {
   const ctx = getCtx();
   const now = ctx.currentTime;
 
-  // Multiple short noise bursts to simulate bamboo sticks clacking
-  for (let i = 0; i < 6; i++) {
-    const t = now + i * 0.08;
-    const dur = 0.04;
+  // Fewer, rounder bursts with a woody low-mid resonance
+  for (let i = 0; i < 5; i++) {
+    const t = now + i * 0.07 + Math.random() * 0.03;
+    const dur = 0.06;
 
-    // Noise via oscillator with high frequency randomness
+    // Low woody knock
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();
     const filter = ctx.createBiquadFilter();
 
-    osc.type = "square";
-    osc.frequency.setValueAtTime(800 + Math.random() * 1200, t);
-    osc.frequency.exponentialRampToValueAtTime(200 + Math.random() * 400, t + dur);
+    osc.type = "triangle"; // softer than square
+    osc.frequency.setValueAtTime(350 + Math.random() * 250, t);
+    osc.frequency.exponentialRampToValueAtTime(120 + Math.random() * 80, t + dur);
 
     filter.type = "bandpass";
-    filter.frequency.setValueAtTime(2000 + Math.random() * 2000, t);
-    filter.Q.setValueAtTime(2, t);
+    filter.frequency.setValueAtTime(800 + Math.random() * 600, t);
+    filter.Q.setValueAtTime(4, t); // narrower resonance = more hollow
 
-    gain.gain.setValueAtTime(0.08, t);
+    gain.gain.setValueAtTime(0.12, t);
     gain.gain.exponentialRampToValueAtTime(0.001, t + dur);
 
     osc.connect(filter).connect(gain).connect(ctx.destination);
     osc.start(t);
     osc.stop(t + dur);
+
+    // Subtle high-frequency rattle layer (bamboo sticks clicking)
+    const osc2 = ctx.createOscillator();
+    const gain2 = ctx.createGain();
+    const filter2 = ctx.createBiquadFilter();
+    osc2.type = "square";
+    osc2.frequency.setValueAtTime(1800 + Math.random() * 800, t);
+    osc2.frequency.exponentialRampToValueAtTime(600, t + 0.025);
+    filter2.type = "highpass";
+    filter2.frequency.setValueAtTime(1200, t);
+    gain2.gain.setValueAtTime(0.03, t);
+    gain2.gain.exponentialRampToValueAtTime(0.001, t + 0.025);
+    osc2.connect(filter2).connect(gain2).connect(ctx.destination);
+    osc2.start(t);
+    osc2.stop(t + 0.03);
   }
 }
 
-/** Single stick popping out sound */
+/** Single stick popping out sound — deeper, more resonant */
 export function playStickPopSound() {
   const ctx = getCtx();
   const now = ctx.currentTime;
 
-  // Woody "tok" sound
+  // Deep woody "tok"
   const osc = ctx.createOscillator();
   const gain = ctx.createGain();
   osc.type = "triangle";
-  osc.frequency.setValueAtTime(600, now);
-  osc.frequency.exponentialRampToValueAtTime(150, now + 0.15);
-  gain.gain.setValueAtTime(0.15, now);
-  gain.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
+  osc.frequency.setValueAtTime(420, now);
+  osc.frequency.exponentialRampToValueAtTime(100, now + 0.18);
+  gain.gain.setValueAtTime(0.2, now);
+  gain.gain.exponentialRampToValueAtTime(0.001, now + 0.18);
   osc.connect(gain).connect(ctx.destination);
   osc.start(now);
-  osc.stop(now + 0.15);
+  osc.stop(now + 0.18);
 
-  // Higher click layer
+  // Hollow resonance body
   const osc2 = ctx.createOscillator();
   const gain2 = ctx.createGain();
-  osc2.type = "square";
-  osc2.frequency.setValueAtTime(1800, now);
-  osc2.frequency.exponentialRampToValueAtTime(400, now + 0.06);
-  gain2.gain.setValueAtTime(0.06, now);
-  gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.06);
-  osc2.connect(gain2).connect(ctx.destination);
+  const filter = ctx.createBiquadFilter();
+  osc2.type = "sine";
+  osc2.frequency.setValueAtTime(280, now);
+  osc2.frequency.exponentialRampToValueAtTime(90, now + 0.25);
+  filter.type = "bandpass";
+  filter.frequency.setValueAtTime(300, now);
+  filter.Q.setValueAtTime(6, now);
+  gain2.gain.setValueAtTime(0.1, now);
+  gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+  osc2.connect(filter).connect(gain2).connect(ctx.destination);
   osc2.start(now);
-  osc2.stop(now + 0.06);
+  osc2.stop(now + 0.25);
+
+  // Light click accent
+  const osc3 = ctx.createOscillator();
+  const gain3 = ctx.createGain();
+  osc3.type = "square";
+  osc3.frequency.setValueAtTime(1400, now);
+  osc3.frequency.exponentialRampToValueAtTime(300, now + 0.04);
+  gain3.gain.setValueAtTime(0.04, now);
+  gain3.gain.exponentialRampToValueAtTime(0.001, now + 0.04);
+  osc3.connect(gain3).connect(ctx.destination);
+  osc3.start(now);
+  osc3.stop(now + 0.04);
 }
 
-/** Temple bell / chime for card reveal */
+/** Temple bell / chime for card reveal — longer, more ethereal */
 export function playBellSound() {
   const ctx = getCtx();
   const now = ctx.currentTime;
 
-  const fundamentals = [523, 659, 784]; // C5, E5, G5 — a bright chord
+  // Pentatonic-inspired bell tones for an Eastern temple feel
+  const fundamentals = [523, 698, 784]; // C5, F5, G5
+  const decay = 3.5;
 
   fundamentals.forEach((freq, i) => {
+    const onset = now + i * 0.12;
+
+    // Main bell tone
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();
-
     osc.type = "sine";
-    osc.frequency.setValueAtTime(freq, now);
-
-    // Gentle attack, long decay like a bell
-    gain.gain.setValueAtTime(0, now);
-    gain.gain.linearRampToValueAtTime(0.08, now + 0.02 + i * 0.05);
-    gain.gain.exponentialRampToValueAtTime(0.001, now + 2.5);
-
+    osc.frequency.setValueAtTime(freq, onset);
+    gain.gain.setValueAtTime(0, onset);
+    gain.gain.linearRampToValueAtTime(0.1, onset + 0.01);
+    gain.gain.exponentialRampToValueAtTime(0.001, onset + decay);
     osc.connect(gain).connect(ctx.destination);
-    osc.start(now + i * 0.05);
-    osc.stop(now + 2.5);
+    osc.start(onset);
+    osc.stop(onset + decay);
 
-    // Add a subtle harmonic overtone
+    // Overtone 1 — slightly sharp for shimmer
     const osc2 = ctx.createOscillator();
     const gain2 = ctx.createGain();
     osc2.type = "sine";
-    osc2.frequency.setValueAtTime(freq * 2.01, now); // slight detuning
-    gain2.gain.setValueAtTime(0, now);
-    gain2.gain.linearRampToValueAtTime(0.025, now + 0.02 + i * 0.05);
-    gain2.gain.exponentialRampToValueAtTime(0.001, now + 1.8);
+    osc2.frequency.setValueAtTime(freq * 2.003, onset);
+    gain2.gain.setValueAtTime(0, onset);
+    gain2.gain.linearRampToValueAtTime(0.035, onset + 0.01);
+    gain2.gain.exponentialRampToValueAtTime(0.001, onset + decay * 0.7);
     osc2.connect(gain2).connect(ctx.destination);
-    osc2.start(now + i * 0.05);
-    osc2.stop(now + 1.8);
+    osc2.start(onset);
+    osc2.stop(onset + decay * 0.7);
+
+    // Overtone 2 — higher, quieter, adds brightness
+    const osc3 = ctx.createOscillator();
+    const gain3 = ctx.createGain();
+    osc3.type = "sine";
+    osc3.frequency.setValueAtTime(freq * 3.01, onset);
+    gain3.gain.setValueAtTime(0, onset);
+    gain3.gain.linearRampToValueAtTime(0.015, onset + 0.01);
+    gain3.gain.exponentialRampToValueAtTime(0.001, onset + decay * 0.5);
+    osc3.connect(gain3).connect(ctx.destination);
+    osc3.start(onset);
+    osc3.stop(onset + decay * 0.5);
   });
+
+  // Sub-bass hum for depth (like a large bronze bell)
+  const sub = ctx.createOscillator();
+  const subGain = ctx.createGain();
+  sub.type = "sine";
+  sub.frequency.setValueAtTime(130, now);
+  subGain.gain.setValueAtTime(0, now);
+  subGain.gain.linearRampToValueAtTime(0.06, now + 0.05);
+  subGain.gain.exponentialRampToValueAtTime(0.001, now + 4);
+  sub.connect(subGain).connect(ctx.destination);
+  sub.start(now);
+  sub.stop(now + 4);
 }
 
 /** Continuous shaking loop — returns a stop function */
