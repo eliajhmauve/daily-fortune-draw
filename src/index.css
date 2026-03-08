@@ -87,7 +87,38 @@
 
   .fortune-card-bg {
     background: var(--gradient-fortune-card);
-    border: 1px solid hsl(var(--gold-dark));
+    border: 1px solid hsl(var(--gold-dark) / 0.6);
+  }
+
+  .fortune-card-outer {
+    background: linear-gradient(135deg, hsl(var(--gold) / 0.12), hsl(var(--gold-dark) / 0.06), hsl(var(--gold) / 0.12));
+    border: 1px solid hsl(var(--gold) / 0.15);
+  }
+
+  .fortune-texture {
+    background-image:
+      /* Traditional cloud/wave repeating motif */
+      radial-gradient(ellipse 30px 20px at 20% 15%, hsl(var(--gold) / 0.03) 0%, transparent 100%),
+      radial-gradient(ellipse 25px 18px at 75% 25%, hsl(var(--gold) / 0.025) 0%, transparent 100%),
+      radial-gradient(ellipse 28px 22px at 40% 70%, hsl(var(--gold) / 0.02) 0%, transparent 100%),
+      radial-gradient(ellipse 32px 20px at 85% 80%, hsl(var(--gold) / 0.03) 0%, transparent 100%),
+      radial-gradient(ellipse 20px 16px at 10% 55%, hsl(var(--gold) / 0.02) 0%, transparent 100%),
+      radial-gradient(ellipse 22px 18px at 60% 45%, hsl(var(--gold) / 0.025) 0%, transparent 100%),
+      /* Subtle grid pattern like old scroll paper */
+      repeating-linear-gradient(0deg, transparent, transparent 39px, hsl(var(--gold) / 0.015) 39px, hsl(var(--gold) / 0.015) 40px),
+      repeating-linear-gradient(90deg, transparent, transparent 39px, hsl(var(--gold) / 0.01) 39px, hsl(var(--gold) / 0.01) 40px);
+  }
+
+  .fortune-level-badge {
+    background: linear-gradient(135deg, hsl(var(--temple-red) / 0.8), hsl(var(--temple-red-dark)));
+    color: hsl(var(--gold-light));
+    border: 1px solid hsl(var(--gold) / 0.3);
+    text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+  }
+
+  .fortune-info-box {
+    background: hsl(var(--gold) / 0.04);
+    border: 1px solid hsl(var(--gold) / 0.1);
   }
 
   .temple-pattern {
