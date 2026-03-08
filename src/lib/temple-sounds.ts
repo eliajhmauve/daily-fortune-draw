@@ -54,34 +54,50 @@ export function playShakeSound() {
   }
 }
 
-/** Single stick popping out sound */
+/** Single stick popping out sound — deeper, more resonant */
 export function playStickPopSound() {
   const ctx = getCtx();
   const now = ctx.currentTime;
 
-  // Woody "tok" sound
+  // Deep woody "tok"
   const osc = ctx.createOscillator();
   const gain = ctx.createGain();
   osc.type = "triangle";
-  osc.frequency.setValueAtTime(600, now);
-  osc.frequency.exponentialRampToValueAtTime(150, now + 0.15);
-  gain.gain.setValueAtTime(0.15, now);
-  gain.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
+  osc.frequency.setValueAtTime(420, now);
+  osc.frequency.exponentialRampToValueAtTime(100, now + 0.18);
+  gain.gain.setValueAtTime(0.2, now);
+  gain.gain.exponentialRampToValueAtTime(0.001, now + 0.18);
   osc.connect(gain).connect(ctx.destination);
   osc.start(now);
-  osc.stop(now + 0.15);
+  osc.stop(now + 0.18);
 
-  // Higher click layer
+  // Hollow resonance body
   const osc2 = ctx.createOscillator();
   const gain2 = ctx.createGain();
-  osc2.type = "square";
-  osc2.frequency.setValueAtTime(1800, now);
-  osc2.frequency.exponentialRampToValueAtTime(400, now + 0.06);
-  gain2.gain.setValueAtTime(0.06, now);
-  gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.06);
-  osc2.connect(gain2).connect(ctx.destination);
+  const filter = ctx.createBiquadFilter();
+  osc2.type = "sine";
+  osc2.frequency.setValueAtTime(280, now);
+  osc2.frequency.exponentialRampToValueAtTime(90, now + 0.25);
+  filter.type = "bandpass";
+  filter.frequency.setValueAtTime(300, now);
+  filter.Q.setValueAtTime(6, now);
+  gain2.gain.setValueAtTime(0.1, now);
+  gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+  osc2.connect(filter).connect(gain2).connect(ctx.destination);
   osc2.start(now);
-  osc2.stop(now + 0.06);
+  osc2.stop(now + 0.25);
+
+  // Light click accent
+  const osc3 = ctx.createOscillator();
+  const gain3 = ctx.createGain();
+  osc3.type = "square";
+  osc3.frequency.setValueAtTime(1400, now);
+  osc3.frequency.exponentialRampToValueAtTime(300, now + 0.04);
+  gain3.gain.setValueAtTime(0.04, now);
+  gain3.gain.exponentialRampToValueAtTime(0.001, now + 0.04);
+  osc3.connect(gain3).connect(ctx.destination);
+  osc3.start(now);
+  osc3.stop(now + 0.04);
 }
 
 /** Temple bell / chime for card reveal */
