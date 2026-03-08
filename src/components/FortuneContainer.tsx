@@ -96,6 +96,18 @@ const FortuneContainer = () => {
 
   return (
     <div className="relative flex flex-col items-center justify-center min-h-screen overflow-hidden temple-pattern">
+      {/* History button */}
+      <button
+        onClick={() => setHistoryOpen(true)}
+        className="absolute top-5 right-5 z-30 flex items-center gap-1.5 px-3 py-2 rounded-lg border border-gold/20 bg-muted/30 hover:bg-muted/50 text-muted-foreground hover:text-foreground transition-colors font-body text-sm"
+      >
+        <ScrollText className="w-4 h-4" />
+        <span className="hidden sm:inline">歷史紀錄</span>
+      </button>
+
+      {/* History panel */}
+      <FortuneHistory open={historyOpen} onClose={() => setHistoryOpen(false)} />
+
       {/* Smoke effects */}
       <div className="absolute inset-0 pointer-events-none">
         <div
