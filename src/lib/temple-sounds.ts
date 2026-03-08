@@ -27,37 +27,32 @@ export function isMuted(): boolean {
   return _muted;
 }
 
-/** Wooden stick rattling sound — tuned for hollow bamboo tube resonance */
+// ─── Shake Sound ───
+
 export function playShakeSound() {
   const ctx = getCtx();
+  const dest = getDest();
   const now = ctx.currentTime;
 
-  // Fewer, rounder bursts with a woody low-mid resonance
   for (let i = 0; i < 5; i++) {
     const t = now + i * 0.07 + Math.random() * 0.03;
     const dur = 0.06;
 
-    // Low woody knock
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();
     const filter = ctx.createBiquadFilter();
-
-    osc.type = "triangle"; // softer than square
+    osc.type = "triangle";
     osc.frequency.setValueAtTime(350 + Math.random() * 250, t);
     osc.frequency.exponentialRampToValueAtTime(120 + Math.random() * 80, t + dur);
-
     filter.type = "bandpass";
     filter.frequency.setValueAtTime(800 + Math.random() * 600, t);
-    filter.Q.setValueAtTime(4, t); // narrower resonance = more hollow
-
+    filter.Q.setValueAtTime(4, t);
     gain.gain.setValueAtTime(0.12, t);
     gain.gain.exponentialRampToValueAtTime(0.001, t + dur);
-
-    osc.connect(filter).connect(gain).connect(ctx.destination);
+    osc.connect(filter).connect(gain).connect(dest);
     osc.start(t);
     osc.stop(t + dur);
 
-    // Subtle high-frequency rattle layer (bamboo sticks clicking)
     const osc2 = ctx.createOscillator();
     const gain2 = ctx.createGain();
     const filter2 = ctx.createBiquadFilter();
@@ -68,18 +63,19 @@ export function playShakeSound() {
     filter2.frequency.setValueAtTime(1200, t);
     gain2.gain.setValueAtTime(0.03, t);
     gain2.gain.exponentialRampToValueAtTime(0.001, t + 0.025);
-    osc2.connect(filter2).connect(gain2).connect(ctx.destination);
+    osc2.connect(filter2).connect(gain2).connect(dest);
     osc2.start(t);
     osc2.stop(t + 0.03);
   }
 }
 
-/** Single stick popping out sound — deeper, more resonant */
+// ─── Stick Pop Sound ───
+
 export function playStickPopSound() {
   const ctx = getCtx();
+  const dest = getDest();
   const now = ctx.currentTime;
 
-  // Deep woody "tok"
   const osc = ctx.createOscillator();
   const gain = ctx.createGain();
   osc.type = "triangle";
@@ -87,11 +83,10 @@ export function playStickPopSound() {
   osc.frequency.exponentialRampToValueAtTime(100, now + 0.18);
   gain.gain.setValueAtTime(0.2, now);
   gain.gain.exponentialRampToValueAtTime(0.001, now + 0.18);
-  osc.connect(gain).connect(ctx.destination);
+  osc.connect(gain).connect(dest);
   osc.start(now);
   osc.stop(now + 0.18);
 
-  // Hollow resonance body
   const osc2 = ctx.createOscillator();
   const gain2 = ctx.createGain();
   const filter = ctx.createBiquadFilter();
@@ -103,11 +98,10 @@ export function playStickPopSound() {
   filter.Q.setValueAtTime(6, now);
   gain2.gain.setValueAtTime(0.1, now);
   gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
-  osc2.connect(filter).connect(gain2).connect(ctx.destination);
+  osc2.connect(filter).connect(gain2).connect(dest);
   osc2.start(now);
   osc2.stop(now + 0.25);
 
-  // Light click accent
   const osc3 = ctx.createOscillator();
   const gain3 = ctx.createGain();
   osc3.type = "square";
@@ -115,24 +109,24 @@ export function playStickPopSound() {
   osc3.frequency.exponentialRampToValueAtTime(300, now + 0.04);
   gain3.gain.setValueAtTime(0.04, now);
   gain3.gain.exponentialRampToValueAtTime(0.001, now + 0.04);
-  osc3.connect(gain3).connect(ctx.destination);
+  osc3.connect(gain3).connect(dest);
   osc3.start(now);
   osc3.stop(now + 0.04);
 }
 
-/** Temple bell / chime for card reveal — longer, more ethereal */
+// ─── Bell Sound ───
+
 export function playBellSound() {
   const ctx = getCtx();
+  const dest = getDest();
   const now = ctx.currentTime;
 
-  // Pentatonic-inspired bell tones for an Eastern temple feel
-  const fundamentals = [523, 698, 784]; // C5, F5, G5
+  const fundamentals = [523, 698, 784];
   const decay = 3.5;
 
   fundamentals.forEach((freq, i) => {
     const onset = now + i * 0.12;
 
-    // Main bell tone
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();
     osc.type = "sine";
@@ -140,11 +134,10 @@ export function playBellSound() {
     gain.gain.setValueAtTime(0, onset);
     gain.gain.linearRampToValueAtTime(0.1, onset + 0.01);
     gain.gain.exponentialRampToValueAtTime(0.001, onset + decay);
-    osc.connect(gain).connect(ctx.destination);
+    osc.connect(gain).connect(dest);
     osc.start(onset);
     osc.stop(onset + decay);
 
-    // Overtone 1 — slightly sharp for shimmer
     const osc2 = ctx.createOscillator();
     const gain2 = ctx.createGain();
     osc2.type = "sine";
@@ -152,11 +145,10 @@ export function playBellSound() {
     gain2.gain.setValueAtTime(0, onset);
     gain2.gain.linearRampToValueAtTime(0.035, onset + 0.01);
     gain2.gain.exponentialRampToValueAtTime(0.001, onset + decay * 0.7);
-    osc2.connect(gain2).connect(ctx.destination);
+    osc2.connect(gain2).connect(dest);
     osc2.start(onset);
     osc2.stop(onset + decay * 0.7);
 
-    // Overtone 2 — higher, quieter, adds brightness
     const osc3 = ctx.createOscillator();
     const gain3 = ctx.createGain();
     osc3.type = "sine";
@@ -164,12 +156,11 @@ export function playBellSound() {
     gain3.gain.setValueAtTime(0, onset);
     gain3.gain.linearRampToValueAtTime(0.015, onset + 0.01);
     gain3.gain.exponentialRampToValueAtTime(0.001, onset + decay * 0.5);
-    osc3.connect(gain3).connect(ctx.destination);
+    osc3.connect(gain3).connect(dest);
     osc3.start(onset);
     osc3.stop(onset + decay * 0.5);
   });
 
-  // Sub-bass hum for depth (like a large bronze bell)
   const sub = ctx.createOscillator();
   const subGain = ctx.createGain();
   sub.type = "sine";
@@ -177,12 +168,13 @@ export function playBellSound() {
   subGain.gain.setValueAtTime(0, now);
   subGain.gain.linearRampToValueAtTime(0.06, now + 0.05);
   subGain.gain.exponentialRampToValueAtTime(0.001, now + 4);
-  sub.connect(subGain).connect(ctx.destination);
+  sub.connect(subGain).connect(dest);
   sub.start(now);
   sub.stop(now + 4);
 }
 
-/** Continuous shaking loop — returns a stop function */
+// ─── Shake Loop ───
+
 export function startShakeLoop(): () => void {
   let running = true;
   let timeout: ReturnType<typeof setTimeout>;
@@ -198,4 +190,114 @@ export function startShakeLoop(): () => void {
     running = false;
     clearTimeout(timeout);
   };
+}
+
+// ─── Ambient Background Sounds ───
+
+let ambientNodes: { stop: () => void }[] = [];
+let ambientRunning = false;
+
+/** Start ambient temple atmosphere — chanting drone + wind chimes. Returns stop fn. */
+export function startAmbient(): () => void {
+  if (ambientRunning) return () => {};
+  ambientRunning = true;
+  const ctx = getCtx();
+  const dest = getDest();
+
+  // --- Low chanting drone (layered sine waves simulating "Om") ---
+  const droneFreqs = [130, 196, 260]; // C3, G3, C4 — open fifth drone
+  const droneOscs = droneFreqs.map((freq) => {
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    const filter = ctx.createBiquadFilter();
+
+    osc.type = "sine";
+    osc.frequency.setValueAtTime(freq, ctx.currentTime);
+
+    // Slow wobble for organic feel
+    const lfo = ctx.createOscillator();
+    const lfoGain = ctx.createGain();
+    lfo.type = "sine";
+    lfo.frequency.setValueAtTime(0.15 + Math.random() * 0.1, ctx.currentTime);
+    lfoGain.gain.setValueAtTime(2, ctx.currentTime);
+    lfo.connect(lfoGain).connect(osc.frequency);
+    lfo.start();
+
+    filter.type = "lowpass";
+    filter.frequency.setValueAtTime(400, ctx.currentTime);
+    filter.Q.setValueAtTime(1, ctx.currentTime);
+
+    gain.gain.setValueAtTime(0, ctx.currentTime);
+    gain.gain.linearRampToValueAtTime(0.018, ctx.currentTime + 3);
+
+    osc.connect(filter).connect(gain).connect(dest);
+    osc.start();
+
+    return { osc, gain, lfo };
+  });
+
+  // --- Wind chimes: periodic random high bell tones ---
+  let chimeRunning = true;
+  let chimeTimeout: ReturnType<typeof setTimeout>;
+
+  const playChime = () => {
+    if (!chimeRunning) return;
+    const now = ctx.currentTime;
+    // Pentatonic scale for Eastern feel: C, D, E, G, A in octave 6-7
+    const notes = [1047, 1175, 1319, 1568, 1760, 2093, 2349];
+    const freq = notes[Math.floor(Math.random() * notes.length)];
+
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = "sine";
+    osc.frequency.setValueAtTime(freq, now);
+    gain.gain.setValueAtTime(0, now);
+    gain.gain.linearRampToValueAtTime(0.025 + Math.random() * 0.015, now + 0.01);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 2.5);
+    osc.connect(gain).connect(dest);
+    osc.start(now);
+    osc.stop(now + 2.5);
+
+    // Occasionally play a second chime for richness
+    if (Math.random() > 0.5) {
+      const freq2 = notes[Math.floor(Math.random() * notes.length)];
+      const osc2 = ctx.createOscillator();
+      const gain2 = ctx.createGain();
+      osc2.type = "sine";
+      osc2.frequency.setValueAtTime(freq2, now + 0.15);
+      gain2.gain.setValueAtTime(0, now + 0.15);
+      gain2.gain.linearRampToValueAtTime(0.02, now + 0.16);
+      gain2.gain.exponentialRampToValueAtTime(0.001, now + 2);
+      osc2.connect(gain2).connect(dest);
+      osc2.start(now + 0.15);
+      osc2.stop(now + 2.2);
+    }
+
+    chimeTimeout = setTimeout(playChime, 3000 + Math.random() * 5000);
+  };
+
+  // Start first chime after a short delay
+  chimeTimeout = setTimeout(playChime, 1500);
+
+  const stopFn = () => {
+    ambientRunning = false;
+    chimeRunning = false;
+    clearTimeout(chimeTimeout);
+
+    const now = ctx.currentTime;
+    droneOscs.forEach(({ osc, gain, lfo }) => {
+      gain.gain.cancelScheduledValues(now);
+      gain.gain.setValueAtTime(gain.gain.value, now);
+      gain.gain.linearRampToValueAtTime(0, now + 1.5);
+      osc.stop(now + 2);
+      lfo.stop(now + 2);
+    });
+  };
+
+  ambientNodes.push({ stop: stopFn });
+  return stopFn;
+}
+
+export function isAmbientRunning(): boolean {
+  return ambientRunning;
 }
