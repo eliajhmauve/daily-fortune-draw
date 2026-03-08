@@ -132,7 +132,7 @@ export function playBellSound() {
     osc.type = "sine";
     osc.frequency.setValueAtTime(freq, onset);
     gain.gain.setValueAtTime(0, onset);
-    gain.gain.linearRampToValueAtTime(0.1, onset + 0.01);
+    gain.gain.linearRampToValueAtTime(0.14, onset + 0.01);
     gain.gain.exponentialRampToValueAtTime(0.001, onset + decay);
     osc.connect(gain).connect(dest);
     osc.start(onset);
