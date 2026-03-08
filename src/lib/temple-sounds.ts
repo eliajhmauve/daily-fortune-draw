@@ -7,35 +7,50 @@ function getCtx(): AudioContext {
   return audioCtx;
 }
 
-/** Wooden stick rattling sound */
+/** Wooden stick rattling sound — tuned for hollow bamboo tube resonance */
 export function playShakeSound() {
   const ctx = getCtx();
   const now = ctx.currentTime;
 
-  // Multiple short noise bursts to simulate bamboo sticks clacking
-  for (let i = 0; i < 6; i++) {
-    const t = now + i * 0.08;
-    const dur = 0.04;
+  // Fewer, rounder bursts with a woody low-mid resonance
+  for (let i = 0; i < 5; i++) {
+    const t = now + i * 0.07 + Math.random() * 0.03;
+    const dur = 0.06;
 
-    // Noise via oscillator with high frequency randomness
+    // Low woody knock
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();
     const filter = ctx.createBiquadFilter();
 
-    osc.type = "square";
-    osc.frequency.setValueAtTime(800 + Math.random() * 1200, t);
-    osc.frequency.exponentialRampToValueAtTime(200 + Math.random() * 400, t + dur);
+    osc.type = "triangle"; // softer than square
+    osc.frequency.setValueAtTime(350 + Math.random() * 250, t);
+    osc.frequency.exponentialRampToValueAtTime(120 + Math.random() * 80, t + dur);
 
     filter.type = "bandpass";
-    filter.frequency.setValueAtTime(2000 + Math.random() * 2000, t);
-    filter.Q.setValueAtTime(2, t);
+    filter.frequency.setValueAtTime(800 + Math.random() * 600, t);
+    filter.Q.setValueAtTime(4, t); // narrower resonance = more hollow
 
-    gain.gain.setValueAtTime(0.08, t);
+    gain.gain.setValueAtTime(0.12, t);
     gain.gain.exponentialRampToValueAtTime(0.001, t + dur);
 
     osc.connect(filter).connect(gain).connect(ctx.destination);
     osc.start(t);
     osc.stop(t + dur);
+
+    // Subtle high-frequency rattle layer (bamboo sticks clicking)
+    const osc2 = ctx.createOscillator();
+    const gain2 = ctx.createGain();
+    const filter2 = ctx.createBiquadFilter();
+    osc2.type = "square";
+    osc2.frequency.setValueAtTime(1800 + Math.random() * 800, t);
+    osc2.frequency.exponentialRampToValueAtTime(600, t + 0.025);
+    filter2.type = "highpass";
+    filter2.frequency.setValueAtTime(1200, t);
+    gain2.gain.setValueAtTime(0.03, t);
+    gain2.gain.exponentialRampToValueAtTime(0.001, t + 0.025);
+    osc2.connect(filter2).connect(gain2).connect(ctx.destination);
+    osc2.start(t);
+    osc2.stop(t + 0.03);
   }
 }
 
