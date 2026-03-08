@@ -15,10 +15,33 @@ const FortuneContainer = () => {
   const [fortune, setFortune] = useState<Fortune | null>(null);
   const [cooldown, setCooldown] = useState(0);
   const [historyOpen, setHistoryOpen] = useState(false);
+  const [muted, setMutedState] = useState(isMuted());
   const cooldownRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const shakeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const holdStartRef = useRef<number>(0);
   const stopShakeSoundRef = useRef<(() => void) | null>(null);
+  const stopAmbientRef = useRef<(() => void) | null>(null);
+
+  // Start ambient on first user interaction
+  useEffect(() => {
+    const startOnInteraction = () => {
+      if (!stopAmbientRef.current) {
+        stopAmbientRef.current = startAmbient();
+      }
+      window.removeEventListener("pointerdown", startOnInteraction);
+    };
+    window.addEventListener("pointerdown", startOnInteraction);
+    return () => {
+      window.removeEventListener("pointerdown", startOnInteraction);
+      stopAmbientRef.current?.();
+    };
+  }, []);
+
+  const toggleMute = () => {
+    const next = !muted;
+    setMutedState(next);
+    setMuted(next);
+  };
 
   const hasDrawnToday = useCallback(() => {
     const today = new Date().toDateString();
