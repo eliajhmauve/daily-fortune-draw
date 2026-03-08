@@ -47,7 +47,7 @@ export function playShakeSound() {
     filter.type = "bandpass";
     filter.frequency.setValueAtTime(800 + Math.random() * 600, t);
     filter.Q.setValueAtTime(4, t);
-    gain.gain.setValueAtTime(0.12, t);
+    gain.gain.setValueAtTime(0.18, t);
     gain.gain.exponentialRampToValueAtTime(0.001, t + dur);
     osc.connect(filter).connect(gain).connect(dest);
     osc.start(t);
@@ -61,7 +61,7 @@ export function playShakeSound() {
     osc2.frequency.exponentialRampToValueAtTime(600, t + 0.025);
     filter2.type = "highpass";
     filter2.frequency.setValueAtTime(1200, t);
-    gain2.gain.setValueAtTime(0.03, t);
+    gain2.gain.setValueAtTime(0.05, t);
     gain2.gain.exponentialRampToValueAtTime(0.001, t + 0.025);
     osc2.connect(filter2).connect(gain2).connect(dest);
     osc2.start(t);
@@ -81,7 +81,7 @@ export function playStickPopSound() {
   osc.type = "triangle";
   osc.frequency.setValueAtTime(420, now);
   osc.frequency.exponentialRampToValueAtTime(100, now + 0.18);
-  gain.gain.setValueAtTime(0.2, now);
+  gain.gain.setValueAtTime(0.28, now);
   gain.gain.exponentialRampToValueAtTime(0.001, now + 0.18);
   osc.connect(gain).connect(dest);
   osc.start(now);
@@ -96,7 +96,7 @@ export function playStickPopSound() {
   filter.type = "bandpass";
   filter.frequency.setValueAtTime(300, now);
   filter.Q.setValueAtTime(6, now);
-  gain2.gain.setValueAtTime(0.1, now);
+  gain2.gain.setValueAtTime(0.15, now);
   gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
   osc2.connect(filter).connect(gain2).connect(dest);
   osc2.start(now);
@@ -107,7 +107,7 @@ export function playStickPopSound() {
   osc3.type = "square";
   osc3.frequency.setValueAtTime(1400, now);
   osc3.frequency.exponentialRampToValueAtTime(300, now + 0.04);
-  gain3.gain.setValueAtTime(0.04, now);
+  gain3.gain.setValueAtTime(0.06, now);
   gain3.gain.exponentialRampToValueAtTime(0.001, now + 0.04);
   osc3.connect(gain3).connect(dest);
   osc3.start(now);
@@ -132,7 +132,7 @@ export function playBellSound() {
     osc.type = "sine";
     osc.frequency.setValueAtTime(freq, onset);
     gain.gain.setValueAtTime(0, onset);
-    gain.gain.linearRampToValueAtTime(0.1, onset + 0.01);
+    gain.gain.linearRampToValueAtTime(0.14, onset + 0.01);
     gain.gain.exponentialRampToValueAtTime(0.001, onset + decay);
     osc.connect(gain).connect(dest);
     osc.start(onset);
@@ -143,7 +143,7 @@ export function playBellSound() {
     osc2.type = "sine";
     osc2.frequency.setValueAtTime(freq * 2.003, onset);
     gain2.gain.setValueAtTime(0, onset);
-    gain2.gain.linearRampToValueAtTime(0.035, onset + 0.01);
+    gain2.gain.linearRampToValueAtTime(0.05, onset + 0.01);
     gain2.gain.exponentialRampToValueAtTime(0.001, onset + decay * 0.7);
     osc2.connect(gain2).connect(dest);
     osc2.start(onset);
@@ -166,7 +166,7 @@ export function playBellSound() {
   sub.type = "sine";
   sub.frequency.setValueAtTime(130, now);
   subGain.gain.setValueAtTime(0, now);
-  subGain.gain.linearRampToValueAtTime(0.06, now + 0.05);
+  subGain.gain.linearRampToValueAtTime(0.08, now + 0.05);
   subGain.gain.exponentialRampToValueAtTime(0.001, now + 4);
   sub.connect(subGain).connect(dest);
   sub.start(now);
@@ -228,7 +228,7 @@ export function startAmbient(): () => void {
     filter.Q.setValueAtTime(1, ctx.currentTime);
 
     gain.gain.setValueAtTime(0, ctx.currentTime);
-    gain.gain.linearRampToValueAtTime(0.018, ctx.currentTime + 3);
+    gain.gain.linearRampToValueAtTime(0.008, ctx.currentTime + 3);
 
     osc.connect(filter).connect(gain).connect(dest);
     osc.start();
@@ -252,7 +252,7 @@ export function startAmbient(): () => void {
     osc.type = "sine";
     osc.frequency.setValueAtTime(freq, now);
     gain.gain.setValueAtTime(0, now);
-    gain.gain.linearRampToValueAtTime(0.025 + Math.random() * 0.015, now + 0.01);
+    gain.gain.linearRampToValueAtTime(0.012 + Math.random() * 0.008, now + 0.01);
     gain.gain.exponentialRampToValueAtTime(0.001, now + 2.5);
     osc.connect(gain).connect(dest);
     osc.start(now);
@@ -266,7 +266,7 @@ export function startAmbient(): () => void {
       osc2.type = "sine";
       osc2.frequency.setValueAtTime(freq2, now + 0.15);
       gain2.gain.setValueAtTime(0, now + 0.15);
-      gain2.gain.linearRampToValueAtTime(0.02, now + 0.16);
+      gain2.gain.linearRampToValueAtTime(0.01, now + 0.16);
       gain2.gain.exponentialRampToValueAtTime(0.001, now + 2);
       osc2.connect(gain2).connect(dest);
       osc2.start(now + 0.15);
