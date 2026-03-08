@@ -1,8 +1,11 @@
 import { useState, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { getFortuneForToday, getDeviceId, Fortune } from "@/data/fortunes";
+import { saveToHistory } from "@/lib/fortune-history";
 import FortuneStick from "./FortuneStick";
 import FortuneCard from "./FortuneCard";
+import FortuneHistory from "./FortuneHistory";
+import { ScrollText } from "lucide-react";
 
 type Phase = "idle" | "shaking" | "reveal-stick" | "show-card";
 
