@@ -89,12 +89,16 @@ const FortuneContainer = () => {
     setFortune(f);
     setPhase("shaking");
     triggerHaptic();
+    const stopSound = startShakeLoop();
 
     setTimeout(() => {
+      stopSound();
       setPhase("reveal-stick");
+      playStickPopSound();
       setTimeout(() => {
         setPhase("show-card");
         saveToHistory(f);
+        playBellSound();
       }, 1800);
     }, 1000);
   };
