@@ -82,7 +82,10 @@ const FortuneContainer = () => {
 
     setTimeout(() => {
       setPhase("reveal-stick");
-      setTimeout(() => setPhase("show-card"), 1800);
+      setTimeout(() => {
+        setPhase("show-card");
+        saveToHistory(f);
+      }, 1800);
     }, 1000);
   };
 
