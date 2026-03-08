@@ -107,7 +107,7 @@ export function playStickPopSound() {
   osc3.type = "square";
   osc3.frequency.setValueAtTime(1400, now);
   osc3.frequency.exponentialRampToValueAtTime(300, now + 0.04);
-  gain3.gain.setValueAtTime(0.04, now);
+  gain3.gain.setValueAtTime(0.06, now);
   gain3.gain.exponentialRampToValueAtTime(0.001, now + 0.04);
   osc3.connect(gain3).connect(dest);
   osc3.start(now);
