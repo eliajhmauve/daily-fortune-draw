@@ -228,7 +228,7 @@ export function startAmbient(): () => void {
     filter.Q.setValueAtTime(1, ctx.currentTime);
 
     gain.gain.setValueAtTime(0, ctx.currentTime);
-    gain.gain.linearRampToValueAtTime(0.018, ctx.currentTime + 3);
+    gain.gain.linearRampToValueAtTime(0.008, ctx.currentTime + 3);
 
     osc.connect(filter).connect(gain).connect(dest);
     osc.start();
