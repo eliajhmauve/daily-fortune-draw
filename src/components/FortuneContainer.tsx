@@ -2,6 +2,7 @@ import { useState, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { getFortuneForToday, getDeviceId, Fortune } from "@/data/fortunes";
 import { saveToHistory } from "@/lib/fortune-history";
+import { startShakeLoop, playStickPopSound, playBellSound } from "@/lib/temple-sounds";
 import FortuneStick from "./FortuneStick";
 import FortuneCard from "./FortuneCard";
 import FortuneHistory from "./FortuneHistory";
