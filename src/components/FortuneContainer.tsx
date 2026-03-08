@@ -312,6 +312,7 @@ const FortuneContainer = () => {
               }
             >
               {phase === "shaking" ? "搖動中...放開以抽籤" : "長按籤筒搖動求籤"}
+            </motion.p>
           </motion.div>
         )}
 
