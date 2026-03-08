@@ -196,7 +196,7 @@ const FortuneContainer = () => {
           >
             {/* Fortune stick container (竹筒) */}
             <motion.div
-              className="relative w-28 h-44 sm:w-32 sm:h-52 cursor-pointer select-none"
+              className="relative w-32 h-48 sm:w-32 sm:h-52 cursor-pointer select-none touch-none"
               animate={
                 phase === "shaking"
                   ? {
@@ -209,6 +209,30 @@ const FortuneContainer = () => {
               onPointerUp={endShake}
               onPointerLeave={() => phase === "shaking" && endShake()}
             >
+              {/* Idle breathing glow ring */}
+              {phase === "idle" && (
+                <motion.div
+                  className="absolute -inset-5 rounded-2xl border border-primary/20"
+                  animate={{
+                    scale: [1, 1.06, 1],
+                    opacity: [0.3, 0.7, 0.3],
+                  }}
+                  transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
+                />
+              )}
+
+              {/* Tap hint ripple */}
+              {phase === "idle" && (
+                <motion.div
+                  className="absolute -inset-3 rounded-2xl bg-primary/5"
+                  animate={{
+                    scale: [1, 1.15, 1],
+                    opacity: [0, 0.4, 0],
+                  }}
+                  transition={{ duration: 2, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
+                />
+              )}
+
               {/* Bamboo tube */}
               <div className="absolute inset-0 rounded-b-2xl rounded-t-lg bg-gradient-to-b from-gold-dark via-gold/30 to-gold-dark border border-gold-dark overflow-hidden">
                 <div className="absolute inset-x-2 top-2 bottom-2 rounded-b-xl rounded-t bg-gradient-to-b from-background via-muted to-background" />
@@ -232,7 +256,15 @@ const FortuneContainer = () => {
                                 delay: i * 0.05,
                               },
                             }
-                          : {}
+                          : {
+                              y: [0, -2, 0],
+                              transition: {
+                                duration: 3,
+                                repeat: Infinity,
+                                delay: i * 0.2,
+                                ease: "easeInOut",
+                              },
+                            }
                       }
                     />
                   ))}
@@ -248,19 +280,38 @@ const FortuneContainer = () => {
               )}
             </motion.div>
 
+            {/* Hand gesture hint for mobile */}
+            {phase === "idle" && (
+              <motion.div
+                className="mt-4 flex flex-col items-center gap-1 sm:hidden"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 1 }}
+              >
+                <motion.span
+                  className="text-2xl"
+                  animate={{ y: [0, -6, 0], scale: [1, 1.1, 1] }}
+                  transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+                >
+                  👆
+                </motion.span>
+              </motion.div>
+            )}
+
             <motion.p
-              className="mt-6 text-sm text-muted-foreground font-body"
+              className="mt-3 sm:mt-6 text-sm sm:text-sm text-muted-foreground font-body text-center"
               animate={
                 phase === "shaking"
                   ? { opacity: [0.5, 1, 0.5] }
-                  : { opacity: 1 }
+                  : { opacity: [0.6, 1, 0.6] }
               }
               transition={
-                phase === "shaking" ? { duration: 1, repeat: Infinity } : {}
+                phase === "shaking"
+                  ? { duration: 1, repeat: Infinity }
+                  : { duration: 2.5, repeat: Infinity, ease: "easeInOut" }
               }
             >
-              {phase === "shaking" ? "搖動中...放開以抽籤" : "按住籤筒搖動"}
-            </motion.p>
+              {phase === "shaking" ? "搖動中...放開以抽籤" : "長按籤筒搖動求籤"}
           </motion.div>
         )}
 
