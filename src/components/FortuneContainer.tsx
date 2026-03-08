@@ -13,6 +13,7 @@ const FortuneContainer = () => {
   const [phase, setPhase] = useState<Phase>("idle");
   const [fortune, setFortune] = useState<Fortune | null>(null);
   const [cooldown, setCooldown] = useState(0);
+  const [historyOpen, setHistoryOpen] = useState(false);
   const cooldownRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const shakeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const holdStartRef = useRef<number>(0);
