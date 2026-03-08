@@ -166,7 +166,7 @@ export function playBellSound() {
   sub.type = "sine";
   sub.frequency.setValueAtTime(130, now);
   subGain.gain.setValueAtTime(0, now);
-  subGain.gain.linearRampToValueAtTime(0.06, now + 0.05);
+  subGain.gain.linearRampToValueAtTime(0.08, now + 0.05);
   subGain.gain.exponentialRampToValueAtTime(0.001, now + 4);
   sub.connect(subGain).connect(dest);
   sub.start(now);
