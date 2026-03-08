@@ -1,12 +1,12 @@
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { getFortuneForToday, getDeviceId, Fortune } from "@/data/fortunes";
 import { saveToHistory } from "@/lib/fortune-history";
-import { startShakeLoop, playStickPopSound, playBellSound } from "@/lib/temple-sounds";
+import { startShakeLoop, playStickPopSound, playBellSound, startAmbient, setMuted, isMuted } from "@/lib/temple-sounds";
 import FortuneStick from "./FortuneStick";
 import FortuneCard from "./FortuneCard";
 import FortuneHistory from "./FortuneHistory";
-import { ScrollText } from "lucide-react";
+import { ScrollText, Volume2, VolumeX } from "lucide-react";
 
 type Phase = "idle" | "shaking" | "reveal-stick" | "show-card";
 
@@ -15,10 +15,33 @@ const FortuneContainer = () => {
   const [fortune, setFortune] = useState<Fortune | null>(null);
   const [cooldown, setCooldown] = useState(0);
   const [historyOpen, setHistoryOpen] = useState(false);
+  const [muted, setMutedState] = useState(isMuted());
   const cooldownRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const shakeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const holdStartRef = useRef<number>(0);
   const stopShakeSoundRef = useRef<(() => void) | null>(null);
+  const stopAmbientRef = useRef<(() => void) | null>(null);
+
+  // Start ambient on first user interaction
+  useEffect(() => {
+    const startOnInteraction = () => {
+      if (!stopAmbientRef.current) {
+        stopAmbientRef.current = startAmbient();
+      }
+      window.removeEventListener("pointerdown", startOnInteraction);
+    };
+    window.addEventListener("pointerdown", startOnInteraction);
+    return () => {
+      window.removeEventListener("pointerdown", startOnInteraction);
+      stopAmbientRef.current?.();
+    };
+  }, []);
+
+  const toggleMute = () => {
+    const next = !muted;
+    setMutedState(next);
+    setMuted(next);
+  };
 
   const hasDrawnToday = useCallback(() => {
     const today = new Date().toDateString();
@@ -110,14 +133,23 @@ const FortuneContainer = () => {
 
   return (
     <div className="relative flex flex-col items-center justify-center min-h-screen overflow-hidden temple-pattern">
-      {/* History button */}
-      <button
-        onClick={() => setHistoryOpen(true)}
-        className="absolute top-5 right-5 z-30 flex items-center gap-1.5 px-3 py-2 rounded-lg border border-gold/20 bg-muted/30 hover:bg-muted/50 text-muted-foreground hover:text-foreground transition-colors font-body text-sm"
-      >
-        <ScrollText className="w-4 h-4" />
-        <span className="hidden sm:inline">歷史紀錄</span>
-      </button>
+      {/* Top buttons */}
+      <div className="absolute top-5 right-5 z-30 flex items-center gap-2">
+        <button
+          onClick={toggleMute}
+          className="flex items-center gap-1.5 px-3 py-2 rounded-lg border border-gold/20 bg-muted/30 hover:bg-muted/50 text-muted-foreground hover:text-foreground transition-colors font-body text-sm"
+          title={muted ? "開啟音效" : "關閉音效"}
+        >
+          {muted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
+        </button>
+        <button
+          onClick={() => setHistoryOpen(true)}
+          className="flex items-center gap-1.5 px-3 py-2 rounded-lg border border-gold/20 bg-muted/30 hover:bg-muted/50 text-muted-foreground hover:text-foreground transition-colors font-body text-sm"
+        >
+          <ScrollText className="w-4 h-4" />
+          <span className="hidden sm:inline">歷史紀錄</span>
+        </button>
+      </div>
 
       {/* History panel */}
       <FortuneHistory open={historyOpen} onClose={() => setHistoryOpen(false)} />
