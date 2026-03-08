@@ -38,6 +38,8 @@ const FortuneContainer = () => {
     holdStartRef.current = Date.now();
     setPhase("shaking");
     triggerHaptic();
+    // Start looping shake sound
+    stopShakeSoundRef.current = startShakeLoop();
   };
 
   const endShake = () => {
