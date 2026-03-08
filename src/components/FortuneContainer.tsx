@@ -44,6 +44,10 @@ const FortuneContainer = () => {
 
   const endShake = () => {
     if (phase !== "shaking") return;
+    // Stop shake sound
+    stopShakeSoundRef.current?.();
+    stopShakeSoundRef.current = null;
+
     const holdDuration = Date.now() - holdStartRef.current;
     if (holdDuration < 500) {
       setPhase("idle");
@@ -55,12 +59,14 @@ const FortuneContainer = () => {
     setFortune(f);
     setPhase("reveal-stick");
     triggerHaptic();
+    playStickPopSound();
 
     if (shakeTimerRef.current) clearTimeout(shakeTimerRef.current);
     shakeTimerRef.current = setTimeout(() => {
       setPhase("show-card");
       markDrawn();
       saveToHistory(f);
+      playBellSound();
     }, 1800);
   };
 
