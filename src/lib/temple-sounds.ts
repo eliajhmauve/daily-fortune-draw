@@ -252,7 +252,7 @@ export function startAmbient(): () => void {
     osc.type = "sine";
     osc.frequency.setValueAtTime(freq, now);
     gain.gain.setValueAtTime(0, now);
-    gain.gain.linearRampToValueAtTime(0.025 + Math.random() * 0.015, now + 0.01);
+    gain.gain.linearRampToValueAtTime(0.012 + Math.random() * 0.008, now + 0.01);
     gain.gain.exponentialRampToValueAtTime(0.001, now + 2.5);
     osc.connect(gain).connect(dest);
     osc.start(now);
