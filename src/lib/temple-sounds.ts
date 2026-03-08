@@ -47,7 +47,7 @@ export function playShakeSound() {
     filter.type = "bandpass";
     filter.frequency.setValueAtTime(800 + Math.random() * 600, t);
     filter.Q.setValueAtTime(4, t);
-    gain.gain.setValueAtTime(0.12, t);
+    gain.gain.setValueAtTime(0.18, t);
     gain.gain.exponentialRampToValueAtTime(0.001, t + dur);
     osc.connect(filter).connect(gain).connect(dest);
     osc.start(t);
