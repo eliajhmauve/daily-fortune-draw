@@ -56,6 +56,7 @@ const FortuneContainer = () => {
     shakeTimerRef.current = setTimeout(() => {
       setPhase("show-card");
       markDrawn();
+      saveToHistory(f);
     }, 1800);
   };
 
