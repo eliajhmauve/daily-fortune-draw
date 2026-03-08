@@ -2,6 +2,7 @@ import { useState, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { getFortuneForToday, getDeviceId, Fortune } from "@/data/fortunes";
 import { saveToHistory } from "@/lib/fortune-history";
+import { startShakeLoop, playStickPopSound, playBellSound } from "@/lib/temple-sounds";
 import FortuneStick from "./FortuneStick";
 import FortuneCard from "./FortuneCard";
 import FortuneHistory from "./FortuneHistory";
@@ -17,6 +18,7 @@ const FortuneContainer = () => {
   const cooldownRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const shakeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const holdStartRef = useRef<number>(0);
+  const stopShakeSoundRef = useRef<(() => void) | null>(null);
 
   const hasDrawnToday = useCallback(() => {
     const today = new Date().toDateString();
@@ -36,10 +38,16 @@ const FortuneContainer = () => {
     holdStartRef.current = Date.now();
     setPhase("shaking");
     triggerHaptic();
+    // Start looping shake sound
+    stopShakeSoundRef.current = startShakeLoop();
   };
 
   const endShake = () => {
     if (phase !== "shaking") return;
+    // Stop shake sound
+    stopShakeSoundRef.current?.();
+    stopShakeSoundRef.current = null;
+
     const holdDuration = Date.now() - holdStartRef.current;
     if (holdDuration < 500) {
       setPhase("idle");
@@ -51,12 +59,14 @@ const FortuneContainer = () => {
     setFortune(f);
     setPhase("reveal-stick");
     triggerHaptic();
+    playStickPopSound();
 
     if (shakeTimerRef.current) clearTimeout(shakeTimerRef.current);
     shakeTimerRef.current = setTimeout(() => {
       setPhase("show-card");
       markDrawn();
       saveToHistory(f);
+      playBellSound();
     }, 1800);
   };
 
@@ -79,12 +89,16 @@ const FortuneContainer = () => {
     setFortune(f);
     setPhase("shaking");
     triggerHaptic();
+    const stopSound = startShakeLoop();
 
     setTimeout(() => {
+      stopSound();
       setPhase("reveal-stick");
+      playStickPopSound();
       setTimeout(() => {
         setPhase("show-card");
         saveToHistory(f);
+        playBellSound();
       }, 1800);
     }, 1000);
   };
