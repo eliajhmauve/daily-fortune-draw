@@ -61,7 +61,7 @@ export function playShakeSound() {
     osc2.frequency.exponentialRampToValueAtTime(600, t + 0.025);
     filter2.type = "highpass";
     filter2.frequency.setValueAtTime(1200, t);
-    gain2.gain.setValueAtTime(0.03, t);
+    gain2.gain.setValueAtTime(0.05, t);
     gain2.gain.exponentialRampToValueAtTime(0.001, t + 0.025);
     osc2.connect(filter2).connect(gain2).connect(dest);
     osc2.start(t);
