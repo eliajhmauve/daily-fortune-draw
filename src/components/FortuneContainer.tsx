@@ -18,6 +18,7 @@ const FortuneContainer = () => {
   const cooldownRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const shakeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const holdStartRef = useRef<number>(0);
+  const stopShakeSoundRef = useRef<(() => void) | null>(null);
 
   const hasDrawnToday = useCallback(() => {
     const today = new Date().toDateString();
